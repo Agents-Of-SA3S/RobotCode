@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.VictorSP;
 
 /**
  * This sample program shows how to control a motor using a joystick. In the operator
@@ -21,24 +22,30 @@ public class Robot extends SampleRobot {
 	
     private SpeedController leftSide;	// the motor to directly control with a joystick
     private SpeedController rightSide;
-    private SpeedController launcher;
+    private SpeedController rightLauncher;
+    private SpeedController leftLauncher;
     private SpeedController pickUp;
+    
     
     private Joystick stick;
 
 	private final double k_updatePeriod = 0.005; // update every 0.005 seconds/5 milliseconds (200Hz)
 
     public Robot() {
-         leftSide = new Victor(0);	
-        rightSide = new Victor (1);
-        launcher = new Victor (3);
-        pickUp = new Victor (4);// initialize the motor as a Talon on channel 0
+        leftSide = new VictorSP(0);	
+        rightSide = new VictorSP (1);
+        
+        
+        rightLauncher = new Victor(4);
+        leftLauncher = new Victor(3);
+        
+        pickUp = new VictorSP(2);// initialize the motor as a Talon on channel 0
         stick = new Joystick(0);	// initialize the joystick on port 0
     }
 
-    /**
-     * Runs the motor from a joystick.
-     */
+    
+     
+     
     public void operatorControl() {
         while (isOperatorControl() && isEnabled()) {
         	// Set the motor's output.
@@ -47,52 +54,85 @@ public class Robot extends SampleRobot {
         	//figure out how to increment speed as it's being pressed down
         	//figure out how to get z-rotation for the right side of driving the base
         	//figure out how to get d-pad for arms
-        	//AUTONUMOUS      	
+        	//AUTONUMOUS  
+        	
+        	/*if(stick.getRawButton(1) == true)
+        	 * {
+        	 * 
+        	 * }
+        	 * else if(stick.getRawButton(2) == true)
+        	 * {
+        	 * 
+        	 * }
+        	 * else if(stick.getRawButton(3) == true)
+        	 * {
+        	 * 
+        	 * }
+        	 */
         	
         	//X - Left Side A - RIght B - inverse left y - inverse right 
         	
-        	if(stick.getRawButton(1) == true)
-        		leftSide.set(0.5);
-        	if(stick.getRawButton(2) == true)
-            	rightSide.set(0.5);
-        	if(stick.getRawButton(3) == true)
-        		leftSide.set(-0.5);
-        	if(stick.getRawButton(4) == true)
-        		rightSide.set(-0.5);
-        	
+//        	if(stick.getRawButton(1) == true)
+//        		leftSide.set(0.3);
+//        	if(stick.getRawButton(2) == true)
+//            	rightSide.set(0.3);
+//        	if(stick.getRawButton(3) == true)
+//        		leftSide.set(-0.3);
+//        	if(stick.getRawButton(4) == true)
+//        		rightSide.set(-0.3);
         	//right trigger for launcher 
         	//left trigger for pick up
         	
         	if(stick.getRawButton(8) == true)
-            	launcher.set(0.5);
+        	{
+        		rightLauncher.set(0.4);
+        		leftLauncher.set(-0.4);
+        	}
+        	else{
+        		rightLauncher.set(0);
+        		leftLauncher.set(0);
+        	}
+        		
+            	
         	if(stick.getRawButton(7) == true)
             	pickUp.set(0.5);
-        	
+        	else{
+        		pickUp.set(0);
+        	}
         	//right bumper for inverse launcher 
         	//left bumper for inverse pick up
         	
-        	if(stick.getRawButton(5) == true)
-        		launcher.set(-0.5);
         	if(stick.getRawButton(6) == true)
+        	{
+        		rightLauncher.set(-0.4);
+        		leftLauncher.set(0.4);
+        	}
+        	else{
+        		rightLauncher.set(0);
+        		leftLauncher.set(0);
+        	}
+        	
+        	if(stick.getRawButton(5) == true)
         		pickUp.set(-0.5);
+        	else{
+        		pickUp.set(0);
+        	}
         	
         	
-        	
-        	if(stick.getRawButton(10) == true)
-        			System.exit(0);
+        	//if(stick.getRawButton(10) == true)
+        		//	System.exit(0);
         	
         	//SO, basically 
         	//for bumpers, you just need to invert the motors 
         	//
         	
-        	//leftSide.set((stick.getY()) * (.75));
+        	leftSide.set((stick.getY()) * (.5));
         	
+        	leftSide.set((stick.getY()) * (-.5));
         	
-        	//motor2.set((stick.getY()) * (.75));
+        	rightSide.set(stick.getRawAxis(3) * (-.5));
         	
-        	//rightSide.set(stick.getRawAxis(3)*(.75));
-        	
-        	//motor4.set(stick.getRawAxis(3) * (.75));
+        	rightSide.set(stick.getRawAxis(3) * (.5));
         	
         	//Set up launcher and reverse launcher code for right triggers
         	//
