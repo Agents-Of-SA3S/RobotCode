@@ -139,10 +139,12 @@ public class Robot extends SampleRobot {
     //*****************
  
     public void operatorControl() {
+
+        double launcherSpeed = 1;
+        //launcherSpeed may be manipulated therefore cannot be instantiated and declared everytime the loop runs
+
         //getWatchdog().setEnabled(true);
         while (isOperatorControl() && isEnabled()) {
-            
-            double launcherSpeed = 1;
             
             //******************
             //Sticks to move Carl
@@ -161,7 +163,12 @@ public class Robot extends SampleRobot {
             //{
             //pickUp.set(-0.4);
             //}
-            
+
+
+            /*
+                This is to test whether system out actually gives a console log to test for bugs y eso
+                && to test the control button to set launcher speed
+            */
             if(stick.getRawButton(1)){//
                 launcherSpeed = 0.8;
                 System.out.print("button "+1+" Fired!");    
