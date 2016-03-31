@@ -28,10 +28,14 @@ public class Robot extends SampleRobot {
     private SpeedController leftLauncher;
     private SpeedController pickUp;
     private Timer time;
-    
-    //private RobotDrive driveTrain;
-
+    private RobotDrive driveTrain;
     private Joystick stick;
+
+
+    private int curObstacle;
+    private Array obstacles;
+    private Array timeToPassObstacle;
+    private int position;
     
     
 
@@ -54,38 +58,51 @@ public class Robot extends SampleRobot {
         pickUp = new Victor(2);
         stick = new Joystick(0);
         
-        time= new Timer();
+        time = new Timer();
+
+        timeToPassObstacle=[5000,5000,5000,5000,5000,5000];
+        obstacles=["Moat","Rampart","Rough Terrain","Cheval de Frise","Sally Port","Draw Bridge"];
+
+        curObstacle=0;//arrays start from zero guys so moat is 0 rampart is 1 and so on
+
+        position=1;//start from left?
         
         
     }
 
+    private boolean isDoneWithObstacle(int curTime){
+        return false;
+        //only until we have the timing down;
+        if(curTime>=timeToPassObstacle[curObstacle]){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     private int getObstacle(){
-        Array obstacles=["Moat","Ramparts","Rough Terrain","Cheval de Frise","Sally Port","Draw Bridge"];
-        return 0;
+        return obstacles[curObstacle];
     }
     
     //********************
     //Autonomous 
     //********************
+    //https://wpilib.screenstepslive.com/s/4485/m/13809/l/241857-getting-your-robot-to-drive-with-the-robotdrive-class
     public void autonomousPeriodic() {
+
+        //http://users.wpi.edu/~bamiller/WPIRoboticsLibrary/d8/d08/class_timer.html
+        time.start();
 
         while (isAutonomous() && isEnabled()) {
 
-            driveTrain.arcadeDrive(-1.0, 0);//test
+            driveTrain.drive(0.5, 0);//test
 
-            switch(getObstacle()){
-                case 0:
-                break;
-                case 1:
-                break;
-                case 2:
-                break;
-                case 3:
-                break;
-                case 4:
-                break;
-                case 5:
-                break;
+            if(isDoneWithObstacle(time.get())){
+                positionSelf(position);
+            }
+            else{
+                doDat(getObstacle());
             }
 
             Timer.delay(k_updatePeriod);
@@ -93,25 +110,57 @@ public class Robot extends SampleRobot {
         }
 
     }
-    //OKAY TO WHOEVER IS GOING TO SWITCH THE OBSTACLE LISTEN UP
-    //IF YOU WANT TO DO A CERTAIN OBSTACLE, CHANGE THE WHAT OBSTACLE  IS EQUAL TO 
-    //ACCORDING TO THIS:
+
+    public void doDat(String doWhat){
+        return;
+        //only for testing drivetrain
+
+        if(doWhat.equals("Moat")){
+
+        }
+        else if(doWhat.equals("Rampart")){
+            
+        }
+        else if(doWhat.equals("Rough Terrain")){
+            
+        }
+        else if(doWhat.equals("Cheval de Frise")){
+            
+        }
+        else if(doWhat.equals("Sally Port")){
+            
+        }
+        else if(doWhat.equals("Draw Bridge")){
+            
+        }
+        else{
+            //error?
+        }
+
+    }
+
     
-     /*public void autonomous() {
-         while(isAutonomous() && isEnabled())
-         {
-         
-        //****************
-        //Driving up to the obstacle (2pts)
-        //****************
-             
-        for(int i = 0; i < 4; i++)
-            {
-                driveTrain.drive(0.2, 0.0);
-                Timer.delay(2.0);
-            }
-        
-        driveTrain.drive(0.0, 0.0);
+    public void positionSelf(int how){
+
+        if(how == 1){
+
+        }
+        else if(how == 2){
+
+        }
+        else if(how == 3){
+
+        }
+        else if(how == 4){
+
+        }
+        else{
+            //error?
+        }
+
+    }
+    
+     /*
             
     //******************************
     //Switch cases for the obstacles
