@@ -27,7 +27,7 @@ public class Robot extends SampleRobot {
     private SpeedController rightLauncher;
     private SpeedController leftLauncher;
     private SpeedController pickUp;
-    private Timer myTimer= new Timer();
+    private Timer time;
     
     //private RobotDrive driveTrain;
 
@@ -41,28 +41,58 @@ public class Robot extends SampleRobot {
     //Setting new instances of Robot Objects
     //**************************************
     public Robot() {
+        /*void robotInit()*/
         
-        //driveTrain = new RobotDrive(leftSide, rightSide); //speed controllers drive
+        
         
         leftSide = new Victor(0);   
         rightSide = new Victor(1);
-        
+        //driveTrain = new RobotDrive(leftSide, rightSide); //speed controllers drive test
         rightLauncher = new VictorSP(4);
         leftLauncher = new VictorSP(3);
         
         pickUp = new Victor(2);
         stick = new Joystick(0);
         
-        int obstacle;
-        int position; 
+        time= new Timer();
         
         
+    }
+
+    private int getObstacle(){
+        Array obstacles=["Moat","Ramparts","Rough Terrain","Cheval de Frise","Sally Port","Draw Bridge"];
+        return 0;
     }
     
     //********************
     //Autonomous 
     //********************
-    
+    public void autonomousPeriodic() {
+
+        while (isAutonomous() && isEnabled()) {
+
+            driveTrain.arcadeDrive(-1.0, 0);//test
+
+            switch(getObstacle()){
+                case 0:
+                break;
+                case 1:
+                break;
+                case 2:
+                break;
+                case 3:
+                break;
+                case 4:
+                break;
+                case 5:
+                break;
+            }
+
+            Timer.delay(k_updatePeriod);
+
+        }
+
+    }
     //OKAY TO WHOEVER IS GOING TO SWITCH THE OBSTACLE LISTEN UP
     //IF YOU WANT TO DO A CERTAIN OBSTACLE, CHANGE THE WHAT OBSTACLE  IS EQUAL TO 
     //ACCORDING TO THIS:
