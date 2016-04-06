@@ -33,8 +33,8 @@ public class Robot extends SampleRobot {
 
 
     private int curObstacle;
-    private Array obstacles;
-    private Array timeToPassObstacle;
+    private String[] obstacles={"Moat","Rampart","Rough Terrain","Low Bar","Sally Port","Draw Bridge"};
+    private double[] timeToPassObstacle={2.5,5,5,5,5,5};
     private int position;
     
     
@@ -60,8 +60,6 @@ public class Robot extends SampleRobot {
         
         time = new Timer();
 
-        timeToPassObstacle=[5000,5000,5000,5000,5000,5000];
-        obstacles=["Moat","Rampart","Rough Terrain","Cheval de Frise","Sally Port","Draw Bridge"];
 
         curObstacle=0;//arrays start from zero guys so moat is 0 rampart is 1 and so on
 
@@ -70,8 +68,7 @@ public class Robot extends SampleRobot {
         
     }
 
-    private boolean isDoneWithObstacle(int curTime){
-        return false;
+    private boolean isDoneWithObstacle(double curTime){
         //only until we have the timing down;
         if(curTime>=timeToPassObstacle[curObstacle]){
             return true;
@@ -81,7 +78,7 @@ public class Robot extends SampleRobot {
         }
     }
 
-    private int getObstacle(){
+    private String getObstacle(){
         return obstacles[curObstacle];
     }
     
@@ -89,14 +86,13 @@ public class Robot extends SampleRobot {
     //Autonomous 
     //********************
     //https://wpilib.screenstepslive.com/s/4485/m/13809/l/241857-getting-your-robot-to-drive-with-the-robotdrive-class
-    public void autonomousPeriodic() {
+    public void autonomous() {
 
         //http://users.wpi.edu/~bamiller/WPIRoboticsLibrary/d8/d08/class_timer.html
         time.start();
 
         while (isAutonomous() && isEnabled()) {
 
-            driveTrain.drive(0.5, 0);//test
 
             if(isDoneWithObstacle(time.get())){
                 positionSelf(position);
@@ -104,6 +100,7 @@ public class Robot extends SampleRobot {
             else{
                 doDat(getObstacle());
             }
+        	
 
             Timer.delay(k_updatePeriod);
 
@@ -112,20 +109,20 @@ public class Robot extends SampleRobot {
     }
 
     public void doDat(String doWhat){
-        return;
+        //return;
         //only for testing drivetrain
 
         if(doWhat.equals("Moat")){
-
+        	forward(0.5);
         }
         else if(doWhat.equals("Rampart")){
-            
+            forward(0.67);
         }
         else if(doWhat.equals("Rough Terrain")){
-            
+            forward(0.67);
         }
-        else if(doWhat.equals("Cheval de Frise")){
-            
+        else if(doWhat.equals("Low Bar")){
+        	forward(0.67);
         }
         else if(doWhat.equals("Sally Port")){
             
@@ -138,80 +135,46 @@ public class Robot extends SampleRobot {
         }
 
     }
-
+    public void forward(double amount){
+    	leftSide.set(amount);
+    	rightSide.set(-amount);
+    }
+    
+    public void turn(String dir,double amount,double forHowLong){
+    	if(forHowLong>=time.get()-timeToPassObstacle[curObstacle]){
+    		if(dir.equals("right")){
+        		leftSide.set(amount);
+            	rightSide.set(amount);
+        	}
+        	else{
+        		leftSide.set(-amount);
+            	rightSide.set(-amount);
+        	}
+    	}
+    	
+    	
+    }//first is auto for a bit then turn for however long we should
     
     public void positionSelf(int how){
-
+    	
         if(how == 1){
-
+        	turn("left",0.35,0.8);
         }
         else if(how == 2){
-
+        	turn("left",0.35,1.0);
         }
         else if(how == 3){
-
+        	turn("right",0.35,1.0);
         }
         else if(how == 4){
-
+        	turn("right",0.35,1.2);
         }
         else{
             //error?
         }
 
     }
-    
-     /*
             
-    //******************************
-    //Switch cases for the obstacles
-    //******************************
-             
-        switch(obstacle)
-        {
-        //Moat 
-            case 1: 
-        //Ramparts  
-            case 2:
-        //Rock Wall 
-            case 3:
-        //Rough Terrain 
-            case 4:
-        //Cheval de Frise   
-            case 5:
-        //Sally Port    
-            case 6:
-        //Draw Bridge   
-            case 7:
-            
-            default:
-     
-        }    
-             
-             
-             
-    //******************************************** 
-    //Switch cases for positioning after obstacles 
-    //********************************************.
-        switch(position)
-        {
-        //Position 1
-            case 1:
-        //Position 2    
-            case 2:
-        //Position 3    
-            case 3:
-        //Position 4    
-            case 4:
-        //Stop moving after traversing obstacle 
-            default:
-        
-        }
-        
-         }
-     }
-     
-    
-    //}*/
     
     //*****************
     //Operator Controls 
@@ -220,22 +183,31 @@ public class Robot extends SampleRobot {
     public void operatorControl() {
 
         double launcherSpeed = 1;
+        double limiter;
         //launcherSpeed may be manipulated therefore cannot be instantiated and declared everytime the loop runs
 
         //getWatchdog().setEnabled(true);
         while (isOperatorControl() && isEnabled()) {
-            
+        	
+            limiter=1.0;
             //******************
             //Sticks to move Carl
             //******************
+            if(stick.getRawButton(9)){
+            	limiter=0.75;
+            }
+            else if(stick.getRawButton(10)){//half speed left press in a third speed right press in
+            	limiter=0.5;
+            }
             
-            leftSide.set((stick.getY()) * (.7));
             
-            leftSide.set((stick.getY()) * (-.7));
+            leftSide.set((stick.getRawAxis(1)) * (limiter));
             
-            rightSide.set(stick.getRawAxis(3) * (-.7));
+            leftSide.set((stick.getRawAxis(1)) * (-limiter));
             
-            rightSide.set(stick.getRawAxis(3) * (.7));
+            rightSide.set(stick.getRawAxis(5) * (-limiter));
+            
+            rightSide.set(stick.getRawAxis(5) * (limiter));
             
             //*****************
             //if(stick.getRawButton(4) == true)//My launcher code
@@ -243,77 +215,43 @@ public class Robot extends SampleRobot {
             //pickUp.set(-0.4);
             //}
 
-
-            /*
-                This is to test whether system out actually gives a console log to test for bugs y eso
-                && to test the control button to set launcher speed
-            */
             if(stick.getRawButton(1)){//
                 launcherSpeed = 0.8;
-                System.out.print("button "+1+" Fired!");    
             }
             else if(stick.getRawButton(2)){//
                 launcherSpeed = 0.85;
-                System.out.print("button "+2+" Fired!");
                 }
             else if(stick.getRawButton(3)){//
                 launcherSpeed = 0.95;
-            System.out.print("button "+3+" Fired!");
         }
             else if(stick.getRawButton(4)){//
                 launcherSpeed = 1;
-                System.out.print("button "+4+" Fired!");
-            }
-            
-            //BELLOW WILL NOT RUN UNLESS INTIALIZED 
-            if(stick.getRawButton(8))
-            {
-                rightLauncher.set(launcherSpeed-0.1);
-                leftLauncher.set(launcherSpeed);
             }
             
             
             //*******************************
             //Launching and buttons to set it
             //*******************************
-            
-            /*if(stick.getRawButton(8) == true)
-            {
-                if(stick.getRawButton(1) == true)
-                  {
-                        launcherSpeed = 0.4;
-                  }
-                if(stick.getRawButton(2) == true)
-                  {
-                        launcherSpeed = 0.6;
-                  }
-                if(stick.getRawButton(3) == true)
-                  {
-                        launcherSpeed = 1.0;
-                  }
-                rightLauncher.set(launcherSpeed);
-                leftLauncher.set(launcherSpeed);
-            }*/
+
                 
             //*********************
             //Pick up wheels 
             //*********************
             
-            if(stick.getRawButton(7) == true)
-            {
-                pickUp.set(.4);
-            }
-
+            pickUp.set(stick.getRawAxis(2) * 0.5);
             //**********************
             //Inverse launcher + Not being pressed
             //**********************
+            rightLauncher.set(stick.getRawAxis(3));
+            leftLauncher.set(stick.getRawAxis(3));
             
-            if(stick.getRawButton(6) == true)
+            if(stick.getRawButton(6))
             {
-                rightLauncher.set(-1);
-                leftLauncher.set(-1);
+                rightLauncher.set(-0.3);
+                leftLauncher.set(-0.3);
             }
-            if(stick.getRawButton(6)== false && stick.getRawButton(8) == false)
+
+            if(stick.getRawAxis(3) <= 0 && !stick.getRawButton(6))
             {
                 rightLauncher.set(0);
                 leftLauncher.set(0);
@@ -324,13 +262,9 @@ public class Robot extends SampleRobot {
             //Inverse pickup + When pick up not in use
             //**********************
 
-            if(stick.getRawButton(5) == true)
+            if(stick.getRawButton(5))
             {
                 pickUp.set(-.4);
-            }
-            if(stick.getRawButton(5) == false && stick.getRawButton(7) == false && stick.getRawButton(4) == false)
-            {
-                pickUp.set(0);
             }
 
             Timer.delay(k_updatePeriod);    // wait 5ms to the next update
